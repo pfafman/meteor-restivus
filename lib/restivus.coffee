@@ -295,6 +295,7 @@ class @Restivus
         try
           auth = Auth.loginWithPassword user, password
         catch e
+          self._config.onLogInFailure?(user, e.reason)
           return {} =
             statusCode: e.error
             body: status: 'error', message: e.reason

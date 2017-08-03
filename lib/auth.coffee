@@ -58,6 +58,7 @@ getUserQuerySelector = (user) ->
   # Authenticate the user's password
   passwordVerification = Accounts._checkPassword authenticatingUser, password
   if passwordVerification.error
+    console.log("Verification Failure")
     throw new Meteor.Error 401, 'Unauthorized'
 
   # Add a new auth token to the user's account
