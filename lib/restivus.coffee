@@ -295,7 +295,7 @@ class @Restivus
         try
           auth = Auth.loginWithPassword user, password
         catch e
-          self._config.onLogInFailure?(user, e.reason)
+          self._config.onLogInFailure?(user, e.reason, @request)
           return {} =
             statusCode: e.error
             body: status: 'error', message: e.reason
