@@ -1,20 +1,18 @@
 Package.describe({
   name: 'pfafman:restivus',
   summary: 'Create authenticated REST APIs in Meteor 0.9+ via HTTP/HTTPS. Setup CRUD endpoints for Collections.',
-  version: '0.8.14_1',
+  version: '0.8.14_4',
   git: 'https://github.com/kahmali/meteor-restivus.git'
 });
 
 
 Package.onUse(function (api) {
-  // Minimum Meteor version
-  api.versionsFrom('METEOR@0.9.0');
-
+  
   // Meteor dependencies
   api.use('check');
   api.use('coffeescript');
   api.use('underscore');
-  api.use('accounts-password@1.3.3');
+  api.use('accounts-password');
   api.use('simple:json-routes@2.1.0');
 
   api.addFiles('lib/auth.coffee', 'server');

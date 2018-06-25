@@ -60,6 +60,10 @@ getUserQuerySelector = (user) ->
   if passwordVerification.error
     throw new Meteor.Error 401, 'Unauthorized'
 
+  # !!! TEP: Clear current tokens for this is causing a mess when they do not log out !!!
+  Accounts._clearAllLoginTokens(authenticatingUser._id)
+
+
   # Add a new auth token to the user's account
   authToken = Accounts._generateStampedLoginToken()
   hashedToken = Accounts._hashLoginToken authToken.token
