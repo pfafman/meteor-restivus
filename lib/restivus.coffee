@@ -331,7 +331,7 @@ class @Restivus
       tokenToRemove[tokenFieldName] = hashedToken
       tokenRemovalQuery = {}
       tokenRemovalQuery[tokenPath] = tokenToRemove
-      Meteor.users.update @user._id, {$pull: tokenRemovalQuery}
+      Meteor.users.update @user._id, {$pull: tokenRemovalQuery, $unset: {lastApiToken: 1}}
 
       response = {status: 'success', data: {message: 'You\'ve been logged out!'}}
 
