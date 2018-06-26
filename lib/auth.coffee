@@ -61,12 +61,29 @@ getUserQuerySelector = (user) ->
     throw new Meteor.Error 401, 'Unauthorized'
 
   # !!! TEP: Clear current tokens for this is causing a mess when they do not log out !!!
-  Accounts._clearAllLoginTokens(authenticatingUser._id)
-
+  #Accounts._clearAllLoginTokens(authenticatingUser._id)
+  if authenticatingUser.lastApiToken
+    console.log("Auth.loginWithPassword remove user last token", authenticatingUser.lastApiToken)
+    hashedToken = authenticatingUser.lastApiToken
+    tokenLocation = 'services.resume.loginTokens.hashedToken'
+    index = tokenLocation.lastIndexOf '.'
+    tokenPath = tokenLocation.substring 0, index
+    tokenFieldName = tokenLocation.substring index + 1
+    tokenToRemove = {}
+    tokenToRemove[tokenFieldName] = hashedToken
+    tokenRemovalQuery = {}
+    tokenRemovalQuery[tokenPath] = tokenToRemove
+    Meteor.users.update authenticatingUser._id, {$pull: tokenRemovalQuery}
 
   # Add a new auth token to the user's account
   authToken = Accounts._generateStampedLoginToken()
   hashedToken = Accounts._hashLoginToken authToken.token
   Accounts._insertHashedLoginToken authenticatingUser._id, {hashedToken}
+
+  Meteor.users.update
+    _id: authenticatingUser._id
+  ,
+    $set:
+      lastApiToken: hashedToken
 
   return {authToken: authToken.token, userId: authenticatingUser._id}
