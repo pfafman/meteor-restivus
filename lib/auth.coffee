@@ -63,7 +63,7 @@ getUserQuerySelector = (user) ->
   # !!! TEP: Clear current tokens for this is causing a mess when they do not log out !!!
   #Accounts._clearAllLoginTokens(authenticatingUser._id)
   if authenticatingUser.lastApiToken
-    console.log("Auth.loginWithPassword remove user last token", authenticatingUser.lastApiToken)
+    console.log("API [Auth.loginWithPassword]: remove user last token for #{authenticatingUser.username}")
     hashedToken = authenticatingUser.lastApiToken
     tokenLocation = 'services.resume.loginTokens.hashedToken'
     index = tokenLocation.lastIndexOf '.'
