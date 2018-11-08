@@ -42,6 +42,7 @@ getUserQuerySelector = (user) ->
   if not user or not password
     throw new Meteor.Error 401, 'Unauthorized'
 
+  console.log("API loginWithPassword: user #{user.username}")
   # Validate the login input types
   check user, userValidator
   check password, passwordValidator
@@ -58,10 +59,28 @@ getUserQuerySelector = (user) ->
   # Authenticate the user's password
   passwordVerification = Accounts._checkPassword authenticatingUser, password
   if passwordVerification.error
+    console.log("API loginWithPassword: #{user.username} passwordVerification failed")
     throw new Meteor.Error 401, 'Unauthorized'
 
   # !!! TEP: Clear current tokens for this is causing a mess when they do not log out !!!
-  #Accounts._clearAllLoginTokens(authenticatingUser._id)
+  userInfo = Meteor.users.findOne
+    _id: authenticatingUser._id
+
+  #console.log("API user tokens", userInfo?.services?.resume?.loginTokens)
+
+  if userInfo?.services?.resume?.loginTokens?.length > 5
+    console.log("Too Many Tokens for user #{user.username}")
+    count = userInfo.services.resume.loginTokens.length
+    while count > 5
+      Meteor.users.update
+        _id: authenticatingUser._id
+      , 
+        $pop:
+          'services.resume.loginTokens': -1
+      count--
+
+    #Accounts._clearAllLoginTokens(authenticatingUser._id)
+  
   if authenticatingUser.lastApiToken
     console.log("API [Auth.loginWithPassword]: remove user last token for #{authenticatingUser.username}")
     hashedToken = authenticatingUser.lastApiToken
@@ -87,3 +106,4 @@ getUserQuerySelector = (user) ->
       lastApiToken: hashedToken
 
   return {authToken: authToken.token, userId: authenticatingUser._id}
+
